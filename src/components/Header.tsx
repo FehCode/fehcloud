@@ -5,6 +5,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Link, useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
+import { useAuth } from "@/hooks/useAuth";
 
 interface HeaderProps {
   totalFiles: number;
@@ -16,13 +17,24 @@ const Header = ({ totalFiles, totalSize, usedSpace }: HeaderProps) => {
   const usedPercentage = Math.min(usedSpace, 100);
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { signOut, user } = useAuth();
 
-  const handleLogout = () => {
-    toast({
-      title: "Logout realizado",
-      description: "Você foi desconectado com sucesso.",
-    });
-    navigate("/");
+  const handleLogout = async () => {
+    const { error } = await signOut();
+    
+    if (error) {
+      toast({
+        title: "Erro ao sair",
+        description: "Não foi possível fazer logout.",
+        variant: "destructive",
+      });
+    } else {
+      toast({
+        title: "Logout realizado",
+        description: "Você foi desconectado com sucesso.",
+      });
+      navigate("/");
+    }
   };
 
   return (
@@ -129,7 +141,7 @@ const Header = ({ totalFiles, totalSize, usedSpace }: HeaderProps) => {
                   <Button variant="ghost" className="relative h-10 w-10 rounded-full">
                     <Avatar className="h-10 w-10">
                       <AvatarFallback className="gradient-primary text-primary-foreground">
-                        JS
+                        {user?.email?.charAt(0).toUpperCase() || "U"}
                       </AvatarFallback>
                     </Avatar>
                   </Button>
@@ -137,9 +149,11 @@ const Header = ({ totalFiles, totalSize, usedSpace }: HeaderProps) => {
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-56" align="end" forceMount>
                 <div className="flex flex-col space-y-1 p-2">
-                  <p className="text-sm font-medium leading-none">João Silva</p>
+                  <p className="text-sm font-medium leading-none">
+                    {user?.user_metadata?.name || "Usuário"}
+                  </p>
                   <p className="text-xs leading-none text-muted-foreground">
-                    joao@exemplo.com
+                    {user?.email}
                   </p>
                 </div>
                 <DropdownMenuSeparator />

@@ -1,20 +1,31 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Header from "@/components/Header";
 import FileUpload from "@/components/FileUpload";
 import FileList from "@/components/FileList";
-import { useFileStorage } from "@/hooks/useFileStorage";
+import { useSupabaseFileStorage } from "@/hooks/useSupabaseFileStorage";
+import { useAuth } from "@/hooks/useAuth";
 import { Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
-  const { files, loading, addFiles, downloadFile, deleteFile, stats } = useFileStorage();
+  const { user, loading: authLoading } = useAuth();
+  const { files, loading, addFiles, downloadFile, deleteFile, stats } = useSupabaseFileStorage();
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const navigate = useNavigate();
+
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (!authLoading && !user) {
+      navigate("/login");
+    }
+  }, [user, authLoading, navigate]);
 
   const handleFileUpload = async (newFiles: File[]) => {
     await addFiles(newFiles);
   };
 
-  if (loading) {
+  if (authLoading || loading) {
     return (
       <motion.div 
         initial={{ opacity: 0 }}

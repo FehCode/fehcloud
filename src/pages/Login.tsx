@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -7,6 +7,8 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Cloud, Eye, EyeOff, Mail, Lock, ArrowLeft } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
+
 const Login = () => {
   const [formData, setFormData] = useState({
     email: "",
@@ -16,27 +18,34 @@ const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
-  const {
-    toast
-  } = useToast();
+  const { toast } = useToast();
+  const { signIn, user } = useAuth();
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (user) {
+      navigate("/app");
+    }
+  }, [user, navigate]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setError("");
 
-    // Simulate authentication
-    setTimeout(() => {
-      if (formData.email === "demo@fehclaude.com" && formData.password === "demo123") {
-        toast({
-          title: "Login realizado com sucesso!",
-          description: "Bem-vindo de volta ao FehClaude."
-        });
-        navigate("/app");
-      } else {
-        setError("Email ou senha incorretos. Tente: demo@fehclaude.com / demo123");
-      }
-      setIsLoading(false);
-    }, 1500);
+    const { error } = await signIn(formData.email, formData.password);
+    
+    if (error) {
+      setError(error.message);
+    } else {
+      toast({
+        title: "Login realizado com sucesso!",
+        description: "Bem-vindo de volta ao FehClaude."
+      });
+      navigate("/app");
+    }
+    
+    setIsLoading(false);
   };
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const {

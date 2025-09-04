@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -7,6 +7,8 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Cloud, Eye, EyeOff, Mail, Lock, User, ArrowLeft, CheckCircle } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
+
 const Register = () => {
   const [formData, setFormData] = useState({
     name: "",
@@ -20,9 +22,15 @@ const Register = () => {
   const [error, setError] = useState("");
   const [acceptTerms, setAcceptTerms] = useState(false);
   const navigate = useNavigate();
-  const {
-    toast
-  } = useToast();
+  const { toast } = useToast();
+  const { signUp, user } = useAuth();
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (user) {
+      navigate("/app");
+    }
+  }, [user, navigate]);
   const validateForm = () => {
     if (!formData.name.trim()) {
       setError("Nome é obrigatório");
@@ -52,15 +60,19 @@ const Register = () => {
     if (!validateForm()) return;
     setIsLoading(true);
 
-    // Simulate registration
-    setTimeout(() => {
+    const { error } = await signUp(formData.email, formData.password);
+    
+    if (error) {
+      setError(error.message);
+    } else {
       toast({
         title: "Conta criada com sucesso!",
-        description: "Bem-vindo ao FehClaude. Sua conta foi criada e você já está logado."
+        description: "Verifique seu email para confirmar a conta e faça login."
       });
-      navigate("/app");
-      setIsLoading(false);
-    }, 2000);
+      navigate("/login");
+    }
+    
+    setIsLoading(false);
   };
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const {
