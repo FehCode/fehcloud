@@ -4,12 +4,14 @@ import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "./useAuth";
 
-const MAX_STORAGE_SIZE = 100 * 1024 * 1024; // 100MB limit for demo
+const DEFAULT_QUOTA = 200 * 1024 * 1024 * 1024; // 200GB default (Basic plan)
+const SIGNED_URL_TTL_SECONDS = 600; // 10 minutes for signed URLs
 
 export const useSupabaseFileStorage = () => {
   const [files, setFiles] = useState<CloudFile[]>([]);
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
+  const [quotaBytes, setQuotaBytes] = useState<number>(DEFAULT_QUOTA);
 
   // Load files from Supabase
   const loadFiles = useCallback(async () => {
@@ -20,6 +22,16 @@ export const useSupabaseFileStorage = () => {
     }
 
     try {
+      // Load user quota (plan-based)
+      const { data: plan, error: planError } = await supabase
+        .from("user_plans")
+        .select("quota_bytes")
+        .eq("user_id", user.id)
+        .maybeSingle();
+      if (!planError && plan?.quota_bytes) {
+        setQuotaBytes(Number(plan.quota_bytes));
+      }
+
       const { data, error } = await supabase
         .from("files")
         .select("*")
@@ -39,8 +51,7 @@ export const useSupabaseFileStorage = () => {
             // Get signed URL for file access
             const { data: urlData } = await supabase.storage
               .from('user-files')
-              .createSignedUrl(file.storage_path, 3600); // 1 hour expiry
-            
+              .createSignedUrl(file.storage_path, SIGNED_URL_TTL_SECONDS); // 10 min expiry
             return {
               id: file.id,
               name: file.name,
@@ -84,7 +95,7 @@ export const useSupabaseFileStorage = () => {
       const currentSize = files.reduce((total, file) => total + file.size, 0);
       const newFilesSize = newFiles.reduce((total, file) => total + file.size, 0);
 
-      if (currentSize + newFilesSize > MAX_STORAGE_SIZE) {
+      if (currentSize + newFilesSize > quotaBytes) {
         toast({
           title: "Limite excedido",
           description: "Não há espaço suficiente para todos os arquivos.",
@@ -280,7 +291,7 @@ export const useSupabaseFileStorage = () => {
   // Get storage statistics
   const getStats = useCallback((): FileStats => {
     const totalSize = files.reduce((total, file) => total + file.size, 0);
-    const usedPercentage = (totalSize / MAX_STORAGE_SIZE) * 100;
+    const usedPercentage = quotaBytes > 0 ? (totalSize / quotaBytes) * 100 : 0;
 
     return {
       totalFiles: files.length,
