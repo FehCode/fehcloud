@@ -166,7 +166,7 @@ export const useSupabaseFileStorage = () => {
       });
       return false;
     }
-  }, [user, files, loadFiles]);
+  }, [user, files, quotaBytes, loadFiles]);
 
   // Download file
   const downloadFile = useCallback(async (file: CloudFile) => {
@@ -297,8 +297,9 @@ export const useSupabaseFileStorage = () => {
       totalFiles: files.length,
       totalSize,
       usedPercentage: Math.min(usedPercentage, 100),
+      quotaBytes,
     };
-  }, [files]);
+  }, [files, quotaBytes]);
 
   const stats = getStats();
 

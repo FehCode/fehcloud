@@ -166,6 +166,7 @@ export const useFileStorage = () => {
       totalFiles: files.length,
       totalSize,
       usedPercentage: Math.min(usedPercentage, 100),
+      quotaBytes: MAX_STORAGE_SIZE,
     };
   }, [files]);
 

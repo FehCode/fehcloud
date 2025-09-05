@@ -12,6 +12,7 @@ export interface FileStats {
   totalFiles: number;
   totalSize: number;
   usedPercentage: number;
+  quotaBytes: number;
 }
 
 export const formatFileSize = (bytes: number): string => {
