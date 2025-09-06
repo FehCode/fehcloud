@@ -79,7 +79,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      plan_tier: "basic" | "intermediate" | "max"
+      plan_tier: "free" | "basic" | "intermediate" | "max"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -207,7 +207,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      plan_tier: ["basic", "intermediate", "max"],
+      plan_tier: ["free", "basic", "intermediate", "max"],
     },
   },
 } as const
