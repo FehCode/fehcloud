@@ -84,39 +84,68 @@ const Header = ({ totalFiles, totalSize, usedSpace }: HeaderProps) => {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.2 }}
-            className="hidden md:flex items-center space-x-8"
+            className="hidden md:flex items-center space-x-6"
           >
+            {/* Files Count Card */}
             <motion.div 
-              whileHover={{ scale: 1.05 }}
-              className="flex items-center space-x-2 text-sm"
+              whileHover={{ scale: 1.05, y: -2 }}
+              className="glass-card px-4 py-3 rounded-xl border border-border/50 backdrop-blur-sm bg-card/30 shadow-medium hover:shadow-large transition-all duration-300"
             >
-              <HardDrive className="h-4 w-4 text-muted-foreground" />
-              <span className="font-medium">{totalFiles} arquivos</span>
+              <div className="flex items-center space-x-3">
+                <div className="p-2 rounded-lg bg-primary/10">
+                  <HardDrive className="h-4 w-4 text-primary" />
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-xs text-muted-foreground uppercase tracking-wide">Arquivos</span>
+                  <span className="text-sm font-semibold text-foreground">{totalFiles}</span>
+                </div>
+              </div>
             </motion.div>
+
+            {/* Storage Used Card */}
             <motion.div 
-              whileHover={{ scale: 1.05 }}
-              className="flex items-center space-x-2 text-sm"
+              whileHover={{ scale: 1.05, y: -2 }}
+              className="glass-card px-4 py-3 rounded-xl border border-border/50 backdrop-blur-sm bg-card/30 shadow-medium hover:shadow-large transition-all duration-300"
             >
-              <Users className="h-4 w-4 text-muted-foreground" />
-              <span className="font-medium">{totalSize} usado</span>
+              <div className="flex items-center space-x-3">
+                <div className="p-2 rounded-lg bg-accent/20">
+                  <Users className="h-4 w-4 text-accent" />
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-xs text-muted-foreground uppercase tracking-wide">Usado</span>
+                  <span className="text-sm font-semibold text-foreground">{totalSize}</span>
+                </div>
+              </div>
             </motion.div>
             
-            {/* Storage Usage */}
+            {/* Storage Progress Card */}
             <motion.div 
-              whileHover={{ scale: 1.05 }}
-              className="flex items-center space-x-3"
+              whileHover={{ scale: 1.05, y: -2 }}
+              className="glass-card px-5 py-3 rounded-xl border border-border/50 backdrop-blur-sm bg-card/30 shadow-medium hover:shadow-large transition-all duration-300"
             >
-              <div className="flex flex-col items-end">
-                <span className="text-xs text-muted-foreground">Armazenamento</span>
-                <span className="text-sm font-medium">{usedPercentage}% usado</span>
-              </div>
-              <div className="w-24 h-2 bg-muted rounded-full overflow-hidden">
-                <motion.div 
-                  initial={{ width: 0 }}
-                  animate={{ width: `${usedPercentage}%` }}
-                  transition={{ duration: 1, delay: 0.5 }}
-                  className="h-full gradient-primary"
-                />
+              <div className="flex items-center space-x-4">
+                <div className="flex flex-col items-start min-w-0">
+                  <span className="text-xs text-muted-foreground uppercase tracking-wide">Capacidade</span>
+                  <span className="text-sm font-semibold text-foreground">{usedPercentage}% usado</span>
+                </div>
+                <div className="flex flex-col items-center space-y-1">
+                  <div className="w-28 h-2 bg-muted/60 rounded-full overflow-hidden">
+                    <motion.div 
+                      initial={{ width: 0 }}
+                      animate={{ width: `${usedPercentage}%` }}
+                      transition={{ duration: 1, delay: 0.5 }}
+                      className={`h-full rounded-full ${
+                        usedPercentage >= 90 ? 'bg-destructive' 
+                        : usedPercentage >= 70 ? 'bg-orange-500' 
+                        : 'gradient-primary'
+                      }`}
+                    />
+                  </div>
+                  <div className="flex justify-between w-28 text-xs text-muted-foreground">
+                    <span>0%</span>
+                    <span>100%</span>
+                  </div>
+                </div>
               </div>
             </motion.div>
           </motion.div>
