@@ -4,7 +4,7 @@ import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "./useAuth";
 
-const DEFAULT_QUOTA = 200 * 1024 * 1024 * 1024; // 200GB default (Basic plan)
+const DEFAULT_QUOTA = 100 * 1024 * 1024 * 1024; // 100GB default (Free plan)
 const SIGNED_URL_TTL_SECONDS = 600; // 10 minutes for signed URLs
 
 export const useSupabaseFileStorage = () => {
