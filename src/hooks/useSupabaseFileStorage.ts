@@ -288,6 +288,49 @@ export const useSupabaseFileStorage = () => {
     }
   }, [user]);
 
+  // Rename file
+  const renameFile = useCallback(async (fileId: string, newName: string) => {
+    if (!user) {
+      toast({
+        title: "Erro de autenticação",
+        description: "Você precisa estar logado para renomear arquivos.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from("files")
+        .update({ name: newName })
+        .eq("id", fileId)
+        .eq("user_id", user.id);
+
+      if (error) {
+        throw error;
+      }
+
+      // Update local state
+      setFiles(prevFiles => 
+        prevFiles.map(file => 
+          file.id === fileId ? { ...file, name: newName } : file
+        )
+      );
+
+      toast({
+        title: "Arquivo renomeado",
+        description: `Arquivo renomeado para "${newName}" com sucesso.`,
+      });
+    } catch (error) {
+      console.error("Error renaming file:", error);
+      toast({
+        title: "Erro ao renomear",
+        description: "Não foi possível renomear o arquivo.",
+        variant: "destructive",
+      });
+    }
+  }, [user]);
+
   // Get storage statistics
   const getStats = useCallback((): FileStats => {
     const totalSize = files.reduce((total, file) => total + file.size, 0);
@@ -309,6 +352,7 @@ export const useSupabaseFileStorage = () => {
     addFiles,
     downloadFile,
     deleteFile,
+    renameFile,
     stats: {
       ...stats,
       totalSizeFormatted: formatFileSize(stats.totalSize),

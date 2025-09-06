@@ -1,23 +1,27 @@
 import React, { useState } from "react";
-import { Grid, List, Search, Download, Trash2, Eye, MoreVertical } from "lucide-react";
+import { Grid, List, Search, Download, Trash2, Eye, MoreVertical, Edit } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { CloudFile, formatFileSize, getFileIcon } from "@/types/file";
 import { motion, AnimatePresence } from "framer-motion";
+import FilePreviewModal from "./FilePreviewModal";
+import RenameFileModal from "./RenameFileModal";
 
 interface FileListProps {
   files: CloudFile[];
   onDownload: (file: CloudFile) => void;
   onDelete: (fileId: string) => void;
+  onRename: (fileId: string, newName: string) => Promise<void>;
   viewMode: "grid" | "list";
   onViewModeChange: (mode: "grid" | "list") => void;
 }
 
-const FileList = ({ files, onDownload, onDelete, viewMode, onViewModeChange }: FileListProps) => {
+const FileList = ({ files, onDownload, onDelete, onRename, viewMode, onViewModeChange }: FileListProps) => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedFile, setSelectedFile] = useState<CloudFile | null>(null);
+  const [previewFile, setPreviewFile] = useState<CloudFile | null>(null);
+  const [renameFile, setRenameFile] = useState<CloudFile | null>(null);
 
   const filteredFiles = files.filter(file =>
     file.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -59,6 +63,14 @@ const FileList = ({ files, onDownload, onDelete, viewMode, onViewModeChange }: F
                 </motion.div>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => setPreviewFile(file)}>
+                  <Eye className="h-4 w-4 mr-2" />
+                  Visualizar
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setRenameFile(file)}>
+                  <Edit className="h-4 w-4 mr-2" />
+                  Renomear
+                </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => onDownload(file)}>
                   <Download className="h-4 w-4 mr-2" />
                   Baixar
@@ -144,6 +156,16 @@ const FileList = ({ files, onDownload, onDelete, viewMode, onViewModeChange }: F
           whileHover={{ opacity: 1, x: 0 }}
           className="flex items-center space-x-2 opacity-0 group-hover:opacity-100 transition-smooth"
         >
+          <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+            <Button variant="ghost" size="sm" onClick={() => setPreviewFile(file)}>
+              <Eye className="h-4 w-4" />
+            </Button>
+          </motion.div>
+          <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+            <Button variant="ghost" size="sm" onClick={() => setRenameFile(file)}>
+              <Edit className="h-4 w-4" />
+            </Button>
+          </motion.div>
           <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
             <Button variant="ghost" size="sm" onClick={() => onDownload(file)}>
               <Download className="h-4 w-4" />
@@ -296,6 +318,21 @@ const FileList = ({ files, onDownload, onDelete, viewMode, onViewModeChange }: F
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Modals */}
+      <FilePreviewModal
+        file={previewFile}
+        isOpen={!!previewFile}
+        onClose={() => setPreviewFile(null)}
+        onDownload={onDownload}
+      />
+      
+      <RenameFileModal
+        file={renameFile}
+        isOpen={!!renameFile}
+        onClose={() => setRenameFile(null)}
+        onRename={onRename}
+      />
     </motion.div>
   );
 };

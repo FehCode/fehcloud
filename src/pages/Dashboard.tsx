@@ -10,7 +10,7 @@ import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
   const { user, loading: authLoading } = useAuth();
-  const { files, loading, addFiles, downloadFile, deleteFile, stats } = useSupabaseFileStorage();
+  const { files, loading, addFiles, downloadFile, deleteFile, renameFile, stats } = useSupabaseFileStorage();
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const navigate = useNavigate();
 
@@ -103,6 +103,7 @@ const Dashboard = () => {
             files={files}
             onDownload={downloadFile}
             onDelete={deleteFile}
+            onRename={renameFile}
             viewMode={viewMode}
             onViewModeChange={setViewMode}
           />
