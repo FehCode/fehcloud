@@ -53,45 +53,89 @@ const FileList = ({ files, onDownload, onDelete, onRename, viewMode, onViewModeC
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <motion.div
-                  initial={{ opacity: 0 }}
-                  whileHover={{ opacity: 1 }}
-                  className="opacity-0 group-hover:opacity-100 transition-smooth"
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 0, scale: 0.8 }}
+                  whileHover={{ opacity: 1, scale: 1 }}
+                  className="opacity-0 group-hover:opacity-100 transition-all duration-200"
                 >
-                  <Button variant="ghost" size="sm">
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    className="h-8 w-8 p-0 bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 shadow-sm"
+                  >
                     <MoreVertical className="h-4 w-4" />
                   </Button>
                 </motion.div>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => setPreviewFile(file)}>
-                  <Eye className="h-4 w-4 mr-2" />
-                  Visualizar
+              <DropdownMenuContent 
+                align="end" 
+                className="w-48 bg-card/95 backdrop-blur-md border border-border/50 shadow-xl"
+              >
+                <DropdownMenuItem 
+                  onClick={() => setPreviewFile(file)}
+                  className="flex items-center gap-3 py-2.5 cursor-pointer hover:bg-primary/10 transition-colors"
+                >
+                  <div className="p-1.5 rounded-md bg-blue-500/20">
+                    <Eye className="h-3.5 w-3.5 text-blue-600" />
+                  </div>
+                  <span className="font-medium">Visualizar</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setRenameFile(file)}>
-                  <Edit className="h-4 w-4 mr-2" />
-                  Renomear
+                
+                <DropdownMenuItem 
+                  onClick={() => setRenameFile(file)}
+                  className="flex items-center gap-3 py-2.5 cursor-pointer hover:bg-primary/10 transition-colors"
+                >
+                  <div className="p-1.5 rounded-md bg-orange-500/20">
+                    <Edit className="h-3.5 w-3.5 text-orange-600" />
+                  </div>
+                  <span className="font-medium">Renomear</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => onDownload(file)}>
-                  <Download className="h-4 w-4 mr-2" />
-                  Baixar
+                
+                <DropdownMenuItem 
+                  onClick={() => onDownload(file)}
+                  className="flex items-center gap-3 py-2.5 cursor-pointer hover:bg-primary/10 transition-colors"
+                >
+                  <div className="p-1.5 rounded-md bg-green-500/20">
+                    <Download className="h-3.5 w-3.5 text-green-600" />
+                  </div>
+                  <span className="font-medium">Baixar</span>
                 </DropdownMenuItem>
+                
+                <div className="h-px bg-border/50 my-1" />
+                
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
-                    <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                      <Trash2 className="h-4 w-4 mr-2" />
-                      Excluir
+                    <DropdownMenuItem 
+                      onSelect={(e) => e.preventDefault()}
+                      className="flex items-center gap-3 py-2.5 cursor-pointer hover:bg-destructive/10 transition-colors text-destructive"
+                    >
+                      <div className="p-1.5 rounded-md bg-red-500/20">
+                        <Trash2 className="h-3.5 w-3.5 text-red-600" />
+                      </div>
+                      <span className="font-medium">Excluir</span>
                     </DropdownMenuItem>
                   </AlertDialogTrigger>
-                  <AlertDialogContent>
+                  <AlertDialogContent className="max-w-md">
                     <AlertDialogHeader>
-                      <AlertDialogTitle>Excluir arquivo</AlertDialogTitle>
-                      <AlertDialogDescription>
-                        Tem certeza que deseja excluir "{file.name}"? Esta ação não pode ser desfeita.
+                      <AlertDialogTitle className="flex items-center gap-3">
+                        <div className="p-2 rounded-full bg-red-500/20">
+                          <Trash2 className="h-5 w-5 text-red-600" />
+                        </div>
+                        Excluir arquivo
+                      </AlertDialogTitle>
+                      <AlertDialogDescription className="pt-2">
+                        Tem certeza que deseja excluir <strong>"{file.name}"</strong>? 
+                        <br />
+                        Esta ação não pode ser desfeita.
                       </AlertDialogDescription>
                     </AlertDialogHeader>
-                    <AlertDialogFooter>
+                    <AlertDialogFooter className="gap-3">
                       <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                      <AlertDialogAction onClick={() => onDelete(file.id)} className="bg-destructive text-destructive-foreground">
+                      <AlertDialogAction 
+                        onClick={() => onDelete(file.id)} 
+                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                      >
+                        <Trash2 className="h-4 w-4 mr-2" />
                         Excluir
                       </AlertDialogAction>
                     </AlertDialogFooter>
@@ -153,42 +197,73 @@ const FileList = ({ files, onDownload, onDelete, onRename, viewMode, onViewModeC
         
         <motion.div
           initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 0, x: 20 }}
           whileHover={{ opacity: 1, x: 0 }}
-          className="flex items-center space-x-2 opacity-0 group-hover:opacity-100 transition-smooth"
+          className="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-all duration-200"
         >
           <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-            <Button variant="ghost" size="sm" onClick={() => setPreviewFile(file)}>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={() => setPreviewFile(file)}
+              className="h-8 w-8 p-0 bg-blue-500/10 hover:bg-blue-500/20 text-blue-600 border border-blue-500/20"
+            >
               <Eye className="h-4 w-4" />
             </Button>
           </motion.div>
           <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-            <Button variant="ghost" size="sm" onClick={() => setRenameFile(file)}>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={() => setRenameFile(file)}
+              className="h-8 w-8 p-0 bg-orange-500/10 hover:bg-orange-500/20 text-orange-600 border border-orange-500/20"
+            >
               <Edit className="h-4 w-4" />
             </Button>
           </motion.div>
           <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-            <Button variant="ghost" size="sm" onClick={() => onDownload(file)}>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={() => onDownload(file)}
+              className="h-8 w-8 p-0 bg-green-500/10 hover:bg-green-500/20 text-green-600 border border-green-500/20"
+            >
               <Download className="h-4 w-4" />
             </Button>
           </motion.div>
           <AlertDialog>
             <AlertDialogTrigger asChild>
               <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-                <Button variant="ghost" size="sm">
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  className="h-8 w-8 p-0 bg-red-500/10 hover:bg-red-500/20 text-red-600 border border-red-500/20"
+                >
                   <Trash2 className="h-4 w-4" />
                 </Button>
               </motion.div>
             </AlertDialogTrigger>
-            <AlertDialogContent>
+            <AlertDialogContent className="max-w-md">
               <AlertDialogHeader>
-                <AlertDialogTitle>Excluir arquivo</AlertDialogTitle>
-                <AlertDialogDescription>
-                  Tem certeza que deseja excluir "{file.name}"? Esta ação não pode ser desfeita.
+                <AlertDialogTitle className="flex items-center gap-3">
+                  <div className="p-2 rounded-full bg-red-500/20">
+                    <Trash2 className="h-5 w-5 text-red-600" />
+                  </div>
+                  Excluir arquivo
+                </AlertDialogTitle>
+                <AlertDialogDescription className="pt-2">
+                  Tem certeza que deseja excluir <strong>"{file.name}"</strong>? 
+                  <br />
+                  Esta ação não pode ser desfeita.
                 </AlertDialogDescription>
               </AlertDialogHeader>
-              <AlertDialogFooter>
+              <AlertDialogFooter className="gap-3">
                 <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                <AlertDialogAction onClick={() => onDelete(file.id)} className="bg-destructive text-destructive-foreground">
+                <AlertDialogAction 
+                  onClick={() => onDelete(file.id)} 
+                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                >
+                  <Trash2 className="h-4 w-4 mr-2" />
                   Excluir
                 </AlertDialogAction>
               </AlertDialogFooter>
