@@ -16,13 +16,20 @@ export interface FileStats {
 }
 
 export const formatFileSize = (bytes: number): string => {
-  if (bytes === 0) return '0 Bytes';
+  if (bytes === 0) return '0 GB';
   
   const k = 1024;
-  const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
   
   return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+};
+
+export const formatFileSizeToGB = (bytes: number): string => {
+  if (bytes === 0) return '0 GB';
+  
+  const gb = bytes / (1024 * 1024 * 1024);
+  return parseFloat(gb.toFixed(2)) + ' GB';
 };
 
 export const getFileIcon = (type: string): string => {

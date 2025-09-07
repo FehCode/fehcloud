@@ -6,14 +6,16 @@ import { Link, useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
 import { useAuth } from "@/hooks/useAuth";
+import { formatFileSizeToGB } from "@/types/file";
 
 interface HeaderProps {
   totalFiles: number;
   totalSize: string;
   usedSpace: number;
+  quotaBytes: number;
 }
 
-const Header = ({ totalFiles, totalSize, usedSpace }: HeaderProps) => {
+const Header = ({ totalFiles, totalSize, usedSpace, quotaBytes }: HeaderProps) => {
   const usedPercentage = Math.min(usedSpace, 100);
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -126,7 +128,7 @@ const Header = ({ totalFiles, totalSize, usedSpace }: HeaderProps) => {
               <div className="flex items-center space-x-4">
                 <div className="flex flex-col items-start min-w-0">
                   <span className="text-xs text-muted-foreground uppercase tracking-wide">Capacidade</span>
-                  <span className="text-sm font-semibold text-foreground">{usedPercentage}% usado</span>
+                  <span className="text-sm font-semibold text-foreground">{formatFileSizeToGB(quotaBytes)}</span>
                 </div>
                 <div className="flex flex-col items-center space-y-1">
                   <div className="w-28 h-2 bg-muted/60 rounded-full overflow-hidden">
@@ -141,10 +143,10 @@ const Header = ({ totalFiles, totalSize, usedSpace }: HeaderProps) => {
                       }`}
                     />
                   </div>
-                  <div className="flex justify-between w-28 text-xs text-muted-foreground">
-                    <span>0%</span>
-                    <span>100%</span>
-                  </div>
+                   <div className="flex justify-between w-28 text-xs text-muted-foreground">
+                     <span>0 GB</span>
+                     <span>{formatFileSizeToGB(quotaBytes)}</span>
+                   </div>
                 </div>
               </div>
             </motion.div>

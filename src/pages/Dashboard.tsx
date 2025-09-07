@@ -55,6 +55,7 @@ const Dashboard = () => {
         totalFiles={stats.totalFiles}
         totalSize={stats.totalSizeFormatted}
         usedSpace={stats.usedPercentage}
+        quotaBytes={stats.quotaBytes}
       />
       
       <main className="max-w-7xl mx-auto px-6 py-8 space-y-8">

@@ -329,7 +329,7 @@ export const useSupabaseFileStorage = () => {
         variant: "destructive",
       });
     }
-  }, [user]);
+  }, [user, toast]);
 
   // Get storage statistics
   const getStats = useCallback((): FileStats => {
