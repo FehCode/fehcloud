@@ -69,7 +69,7 @@ const FileList = ({ files, onDownload, onDelete, onRename, viewMode, onViewModeC
               </DropdownMenuTrigger>
               <DropdownMenuContent 
                 align="end" 
-                className="w-48 bg-card/95 backdrop-blur-md border border-border/50 shadow-xl"
+                className="w-48 bg-card backdrop-blur-md border border-border shadow-xl z-50"
               >
                 <DropdownMenuItem 
                   onClick={() => setPreviewFile(file)}
