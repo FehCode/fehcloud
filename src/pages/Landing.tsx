@@ -23,6 +23,12 @@ const Landing = () => {
           </div>
           
           <div className="flex items-center space-x-4">
+            <Link to="/pricing" className="text-muted-foreground hover:text-foreground transition-smooth">
+              Preços
+            </Link>
+            <Link to="/help" className="text-muted-foreground hover:text-foreground transition-smooth">
+              Ajuda
+            </Link>
             <Link to="/login">
               <Button variant="outline" className="transition-smooth">
                 Entrar
@@ -201,9 +207,10 @@ const Landing = () => {
           </div>
           
           <div className="flex items-center space-x-6 text-sm text-muted-foreground">
+            <Link to="/pricing" className="hover:text-foreground transition-smooth">Preços</Link>
+            <Link to="/help" className="hover:text-foreground transition-smooth">Ajuda</Link>
             <a href="#" className="hover:text-foreground transition-smooth">Privacidade</a>
             <a href="#" className="hover:text-foreground transition-smooth">Termos</a>
-            <a href="#" className="hover:text-foreground transition-smooth">Suporte</a>
             <a href="#" className="hover:text-foreground transition-smooth">Contato</a>
           </div>
         </div>

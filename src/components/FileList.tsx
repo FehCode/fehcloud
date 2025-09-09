@@ -78,12 +78,12 @@ const FileList = ({ files, onDownload, onDelete, onRename, viewMode, onViewModeC
               <motion.div
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="absolute top-2 left-2 z-10"
+                className="absolute top-2 left-2 z-10 bg-white/90 backdrop-blur-sm rounded-md p-1"
               >
                 <Checkbox
                   checked={selectedFiles.has(file.id)}
                   onCheckedChange={() => handleSelectFile(file.id)}
-                  className="bg-white border-2 border-primary"
+                  className="border-2 border-primary data-[state=checked]:bg-primary data-[state=checked]:border-primary"
                 />
               </motion.div>
             )}
@@ -220,12 +220,12 @@ const FileList = ({ files, onDownload, onDelete, onRename, viewMode, onViewModeC
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="absolute top-4 left-4 z-10"
+            className="absolute top-4 left-4 z-10 bg-white/90 backdrop-blur-sm rounded-md p-1"
           >
             <Checkbox
               checked={selectedFiles.has(file.id)}
               onCheckedChange={() => handleSelectFile(file.id)}
-              className="bg-white border-2 border-primary"
+              className="border-2 border-primary data-[state=checked]:bg-primary data-[state=checked]:border-primary"
             />
           </motion.div>
         )}

@@ -1,4 +1,4 @@
-import { Cloud, HardDrive, Users, Settings, LogOut } from "lucide-react";
+import { Cloud, HardDrive, Users, Settings, LogOut, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -188,6 +188,12 @@ const Header = ({ totalFiles, totalSize, usedSpace, quotaBytes }: HeaderProps) =
                   </p>
                 </div>
                 <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <Link to="/profile" className="cursor-pointer">
+                    <User className="mr-2 h-4 w-4" />
+                    <span>Perfil</span>
+                  </Link>
+                </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                   <Link to="/settings" className="cursor-pointer">
                     <Settings className="mr-2 h-4 w-4" />
