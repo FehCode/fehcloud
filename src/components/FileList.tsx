@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { Grid, List, Search, Download, Trash2, Eye, MoreVertical, Edit } from "lucide-react";
+import { Grid, List, Search, Download, Trash2, Eye, MoreVertical, Edit, Check, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { CloudFile, formatFileSize, getFileIcon } from "@/types/file";
@@ -22,11 +23,42 @@ const FileList = ({ files, onDownload, onDelete, onRename, viewMode, onViewModeC
   const [searchTerm, setSearchTerm] = useState("");
   const [previewFile, setPreviewFile] = useState<CloudFile | null>(null);
   const [renameFile, setRenameFile] = useState<CloudFile | null>(null);
+  const [selectedFiles, setSelectedFiles] = useState<Set<string>>(new Set());
+  const [isSelectionMode, setIsSelectionMode] = useState(false);
 
   const filteredFiles = files.filter(file =>
     file.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     file.type.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const handleSelectFile = (fileId: string) => {
+    const newSelected = new Set(selectedFiles);
+    if (newSelected.has(fileId)) {
+      newSelected.delete(fileId);
+    } else {
+      newSelected.add(fileId);
+    }
+    setSelectedFiles(newSelected);
+  };
+
+  const handleSelectAll = () => {
+    if (selectedFiles.size === filteredFiles.length) {
+      setSelectedFiles(new Set());
+    } else {
+      setSelectedFiles(new Set(filteredFiles.map(file => file.id)));
+    }
+  };
+
+  const handleDeleteSelected = () => {
+    selectedFiles.forEach(fileId => onDelete(fileId));
+    setSelectedFiles(new Set());
+    setIsSelectionMode(false);
+  };
+
+  const toggleSelectionMode = () => {
+    setIsSelectionMode(!isSelectionMode);
+    setSelectedFiles(new Set());
+  };
 
   const FileItem = ({ file }: { file: CloudFile }) => {
     const fileIcon = getFileIcon(file.type);
@@ -42,6 +74,19 @@ const FileList = ({ files, onDownload, onDelete, onRename, viewMode, onViewModeC
           className="group gradient-card rounded-xl border border-border p-4 transition-smooth hover:shadow-medium"
         >
           <div className="flex items-start justify-between mb-3">
+            {isSelectionMode && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="absolute top-2 left-2 z-10"
+              >
+                <Checkbox
+                  checked={selectedFiles.has(file.id)}
+                  onCheckedChange={() => handleSelectFile(file.id)}
+                  className="bg-white border-2 border-primary"
+                />
+              </motion.div>
+            )}
             <motion.div
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
@@ -169,9 +214,22 @@ const FileList = ({ files, onDownload, onDelete, onRename, viewMode, onViewModeC
         animate={{ opacity: 1, x: 0 }}
         exit={{ opacity: 0, x: -20 }}
         whileHover={{ scale: 1.01, x: 5 }}
-        className="group flex items-center justify-between p-4 gradient-card rounded-xl border border-border transition-smooth hover:shadow-soft"
+        className="group flex items-center justify-between p-4 gradient-card rounded-xl border border-border transition-smooth hover:shadow-soft relative"
       >
-        <div className="flex items-center space-x-4 flex-1 min-w-0">
+        {isSelectionMode && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="absolute top-4 left-4 z-10"
+          >
+            <Checkbox
+              checked={selectedFiles.has(file.id)}
+              onCheckedChange={() => handleSelectFile(file.id)}
+              className="bg-white border-2 border-primary"
+            />
+          </motion.div>
+        )}
+        <div className="flex items-center space-x-4 flex-1 min-w-0" style={{ marginLeft: isSelectionMode ? '40px' : '0' }}>
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
@@ -308,6 +366,84 @@ const FileList = ({ files, onDownload, onDelete, onRename, viewMode, onViewModeC
           transition={{ delay: 0.3 }}
           className="flex items-center space-x-2"
         >
+          {isSelectionMode && (
+            <>
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleSelectAll}
+                  className="text-primary border-primary hover:bg-primary/10"
+                >
+                  <Check className="h-4 w-4 mr-2" />
+                  {selectedFiles.size === filteredFiles.length ? 'Desmarcar' : 'Selecionar'} Todos
+                </Button>
+              </motion.div>
+              {selectedFiles.size > 0 && (
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        className="bg-red-500 hover:bg-red-600"
+                      >
+                        <Trash2 className="h-4 w-4 mr-2" />
+                        Excluir ({selectedFiles.size})
+                      </Button>
+                    </motion.div>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent className="max-w-md">
+                    <AlertDialogHeader>
+                      <AlertDialogTitle className="flex items-center gap-3">
+                        <div className="p-2 rounded-full bg-red-500/20">
+                          <Trash2 className="h-5 w-5 text-red-600" />
+                        </div>
+                        Excluir arquivos selecionados
+                      </AlertDialogTitle>
+                      <AlertDialogDescription className="pt-2">
+                        Tem certeza que deseja excluir <strong>{selectedFiles.size} arquivo(s)</strong>? 
+                        <br />
+                        Esta ação não pode ser desfeita.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter className="gap-3">
+                      <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                      <AlertDialogAction 
+                        onClick={handleDeleteSelected}
+                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                      >
+                        <Trash2 className="h-4 w-4 mr-2" />
+                        Excluir
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              )}
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={toggleSelectionMode}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </motion.div>
+            </>
+          )}
+          {!isSelectionMode && (
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={toggleSelectionMode}
+                className="text-primary border-primary hover:bg-primary/10"
+              >
+                <Check className="h-4 w-4 mr-2" />
+                Selecionar
+              </Button>
+            </motion.div>
+          )}
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
             <Button
               variant={viewMode === "grid" ? "default" : "outline"}
