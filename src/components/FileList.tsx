@@ -63,7 +63,7 @@ const FileList = ({ files, onDownload, onDelete, onRename, viewMode, onViewModeC
                     size="sm"
                     className="h-8 w-8 p-0 bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 shadow-sm"
                   >
-                    <MoreVertical className="h-4 w-4" />
+                    <MoreVertical className="h-4 w-4 text-black" />
                   </Button>
                 </motion.div>
               </DropdownMenuTrigger>
