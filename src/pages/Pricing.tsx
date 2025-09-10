@@ -40,26 +40,6 @@ const Pricing = () => {
       popular: true,
       cta: "Começar Teste Grátis",
       variant: "default" as const
-    },
-    {
-      name: "Business",
-      price: "R$ 49",
-      period: "/mês",
-      description: "Para equipes e empresas",
-      features: [
-        "10 TB de armazenamento",
-        "Upload de arquivos ilimitado",
-        "Controle avançado de permissões",
-        "Histórico de versões (90 dias)",
-        "Suporte dedicado",
-        "API personalizada",
-        "Backup automático",
-        "Relatórios de uso",
-        "Integração com SSO"
-      ],
-      popular: false,
-      cta: "Contatar Vendas",
-      variant: "outline" as const
     }
   ];
 
