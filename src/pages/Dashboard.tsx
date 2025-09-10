@@ -2,9 +2,10 @@ import React, { useState, useEffect } from "react";
 import Header from "@/components/Header";
 import FileUpload from "@/components/FileUpload";
 import FileList from "@/components/FileList";
+import { Button } from "@/components/ui/button";
 import { useSupabaseFileStorage } from "@/hooks/useSupabaseFileStorage";
 import { useAuth } from "@/hooks/useAuth";
-import { Loader2 } from "lucide-react";
+import { Loader2, FolderOpen, Share2, RotateCcw, RefreshCw } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 
@@ -58,57 +59,173 @@ const Dashboard = () => {
         quotaBytes={stats.quotaBytes}
       />
       
-      <main className="max-w-7xl mx-auto px-6 py-8 space-y-8">
-        {/* Upload Section */}
-        <motion.section
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-        >
-          <motion.div 
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="mb-6"
-          >
-            <h2 className="text-2xl font-bold mb-2">Upload de Arquivos</h2>
-            <p className="text-muted-foreground">
-              Arraste e solte seus arquivos ou clique para selecionar. Máximo 10MB por arquivo.
-            </p>
-          </motion.div>
-          <FileUpload onFileUpload={handleFileUpload} />
-        </motion.section>
+      <main className="min-h-screen">
+        {/* Hero Section with Quick Stats */}
+        <section className="gradient-card border-b border-border shadow-soft">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-8">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-center space-y-4"
+            >
+              <h1 className="text-3xl lg:text-4xl font-bold">
+                Bem-vindo ao seu{" "}
+                <span className="bg-gradient-to-r from-primary to-accent-foreground bg-clip-text text-transparent">
+                  Cloud Storage
+                </span>
+              </h1>
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                Gerencie seus arquivos com segurança, compartilhe com facilidade e colabore em tempo real.
+              </p>
+              
+              {/* Quick Stats */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto mt-8">
+                <motion.div 
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.1 }}
+                  className="text-center"
+                >
+                  <div className="text-2xl lg:text-3xl font-bold text-primary">{stats.totalFiles}</div>
+                  <div className="text-sm text-muted-foreground">Arquivos</div>
+                </motion.div>
+                <motion.div 
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.2 }}
+                  className="text-center"
+                >
+                  <div className="text-2xl lg:text-3xl font-bold text-primary">{stats.totalSizeFormatted}</div>
+                  <div className="text-sm text-muted-foreground">Usado</div>
+                </motion.div>
+                <motion.div 
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.3 }}
+                  className="text-center"
+                >
+                  <div className="text-2xl lg:text-3xl font-bold text-primary">50GB</div>
+                  <div className="text-sm text-muted-foreground">Limite Pro</div>
+                </motion.div>
+                <motion.div 
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.4 }}
+                  className="text-center"
+                >
+                  <div className="text-2xl lg:text-3xl font-bold text-primary">{Math.round(stats.usedPercentage)}%</div>
+                  <div className="text-sm text-muted-foreground">Ocupado</div>
+                </motion.div>
+              </div>
+            </motion.div>
+          </div>
+        </section>
 
-        {/* Files Section */}
-        <motion.section
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-        >
-          <motion.div 
-            initial={{ opacity: 0, y: 10 }}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-8 space-y-8">
+          {/* Upload Section */}
+          <motion.section
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-            className="mb-6"
+            transition={{ delay: 0.1 }}
+            className="grid lg:grid-cols-3 gap-6"
           >
-            <h2 className="text-2xl font-bold mb-2">Meus Arquivos</h2>
-            <p className="text-muted-foreground">
-              {files.length === 0 
-                ? "Nenhum arquivo ainda. Faça seu primeiro upload acima!"
-                : `${files.length} arquivo(s) • ${stats.totalSizeFormatted} usados`
-              }
-            </p>
-          </motion.div>
-          
-          <FileList
-            files={files}
-            onDownload={downloadFile}
-            onDelete={deleteFile}
-            onRename={renameFile}
-            viewMode={viewMode}
-            onViewModeChange={setViewMode}
-          />
-        </motion.section>
+            <div className="lg:col-span-2">
+              <motion.div 
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+                className="mb-6"
+              >
+                <h2 className="text-2xl font-bold mb-2">Upload de Arquivos</h2>
+                <p className="text-muted-foreground">
+                  Arraste e solte seus arquivos ou clique para selecionar. Limite de 50GB por arquivo no plano Pro.
+                </p>
+              </motion.div>
+              <FileUpload onFileUpload={handleFileUpload} />
+            </div>
+            
+            {/* Quick Actions Sidebar */}
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.3 }}
+              className="space-y-4"
+            >
+              <div className="gradient-card border border-border rounded-xl p-6">
+                <h3 className="font-semibold text-lg mb-4">Ações Rápidas</h3>
+                <div className="space-y-3">
+                  <Button variant="outline" className="w-full justify-start">
+                    <FolderOpen className="h-4 w-4 mr-2" />
+                    Nova Pasta Compartilhada
+                  </Button>
+                  <Button variant="outline" className="w-full justify-start">
+                    <Share2 className="h-4 w-4 mr-2" />
+                    Compartilhar Arquivo
+                  </Button>
+                  <Button variant="outline" className="w-full justify-start">
+                    <RotateCcw className="h-4 w-4 mr-2" />
+                    Ver Histórico
+                  </Button>
+                  <Button variant="outline" className="w-full justify-start">
+                    <RefreshCw className="h-4 w-4 mr-2" />
+                    Sincronização Offline
+                  </Button>
+                </div>
+              </div>
+              
+              {/* Storage Usage */}
+              <div className="gradient-card border border-border rounded-xl p-6">
+                <h3 className="font-semibold text-lg mb-4">Armazenamento</h3>
+                <div className="space-y-3">
+                  <div className="flex justify-between text-sm">
+                    <span>Usado</span>
+                    <span>{stats.totalSizeFormatted} de 2TB</span>
+                  </div>
+                  <div className="w-full bg-border rounded-full h-2">
+                    <div 
+                      className="bg-gradient-to-r from-primary to-primary-foreground h-2 rounded-full transition-all duration-300" 
+                      style={{ width: `${Math.min(stats.usedPercentage, 100)}%` }}
+                    />
+                  </div>
+                  <div className="text-xs text-muted-foreground">
+                    Plano Pro ativo - Recursos avançados disponíveis
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </motion.section>
+
+          {/* Files Section */}
+          <motion.section
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+          >
+            <motion.div 
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6 }}
+              className="mb-6"
+            >
+              <h2 className="text-2xl font-bold mb-2">Meus Arquivos</h2>
+              <p className="text-muted-foreground">
+                {files.length === 0 
+                  ? "Nenhum arquivo ainda. Faça seu primeiro upload acima!"
+                  : `${files.length} arquivo(s) • ${stats.totalSizeFormatted} usados • Sincronização automática ativa`
+                }
+              </p>
+            </motion.div>
+            
+            <FileList
+              files={files}
+              onDownload={downloadFile}
+              onDelete={deleteFile}
+              onRename={renameFile}
+              viewMode={viewMode}
+              onViewModeChange={setViewMode}
+            />
+          </motion.section>
+        </div>
       </main>
     </motion.div>
   );
