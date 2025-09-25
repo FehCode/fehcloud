@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Grid, List, Search, Download, Trash2, Eye, MoreVertical, Edit, Check, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -53,6 +54,11 @@ const FileList = ({ files, onDownload, onDelete, onRename, viewMode, onViewModeC
     selectedFiles.forEach(fileId => onDelete(fileId));
     setSelectedFiles(new Set());
     setIsSelectionMode(false);
+  };
+
+  // Download em lote
+  const handleDownloadSelected = () => {
+    files.filter(f => selectedFiles.has(f.id)).forEach(f => onDownload(f));
   };
 
   const toggleSelectionMode = () => {
@@ -196,9 +202,16 @@ const FileList = ({ files, onDownload, onDelete, onRename, viewMode, onViewModeC
             transition={{ delay: 0.2 }}
             className="space-y-2"
           >
-            <h3 className="font-medium text-sm leading-tight truncate" title={file.name}>
-              {file.name}
-            </h3>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <h3 className="font-medium text-sm leading-tight truncate cursor-help" tabIndex={0} aria-label={file.name}>
+                    {file.name}
+                  </h3>
+                </TooltipTrigger>
+                <TooltipContent>{file.name}</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
             <div className="text-xs text-muted-foreground space-y-1">
               <p>{formatFileSize(file.size)}</p>
               <p>{fileDate}</p>
@@ -380,45 +393,58 @@ const FileList = ({ files, onDownload, onDelete, onRename, viewMode, onViewModeC
                 </Button>
               </motion.div>
               {selectedFiles.size > 0 && (
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                      <Button
-                        variant="destructive"
-                        size="sm"
-                        className="bg-red-500 hover:bg-red-600"
-                      >
-                        <Trash2 className="h-4 w-4 mr-2" />
-                        Excluir ({selectedFiles.size})
-                      </Button>
-                    </motion.div>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent className="max-w-md">
-                    <AlertDialogHeader>
-                      <AlertDialogTitle className="flex items-center gap-3">
-                        <div className="p-2 rounded-full bg-red-500/20">
-                          <Trash2 className="h-5 w-5 text-red-600" />
-                        </div>
-                        Excluir arquivos selecionados
-                      </AlertDialogTitle>
-                      <AlertDialogDescription className="pt-2">
-                        Tem certeza que deseja excluir <strong>{selectedFiles.size} arquivo(s)</strong>? 
-                        <br />
-                        Esta ação não pode ser desfeita.
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter className="gap-3">
-                      <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                      <AlertDialogAction 
-                        onClick={handleDeleteSelected}
-                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                      >
-                        <Trash2 className="h-4 w-4 mr-2" />
-                        Excluir
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
+                <>
+                  <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handleDownloadSelected}
+                      className="text-green-700 border-green-500 hover:bg-green-100"
+                    >
+                      <Download className="h-4 w-4 mr-2" />
+                      Baixar ({selectedFiles.size})
+                    </Button>
+                  </motion.div>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          className="bg-red-500 hover:bg-red-600"
+                        >
+                          <Trash2 className="h-4 w-4 mr-2" />
+                          Excluir ({selectedFiles.size})
+                        </Button>
+                      </motion.div>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent className="max-w-md">
+                      <AlertDialogHeader>
+                        <AlertDialogTitle className="flex items-center gap-3">
+                          <div className="p-2 rounded-full bg-red-500/20">
+                            <Trash2 className="h-5 w-5 text-red-600" />
+                          </div>
+                          Excluir arquivos selecionados
+                        </AlertDialogTitle>
+                        <AlertDialogDescription className="pt-2">
+                          Tem certeza que deseja excluir <strong>{selectedFiles.size} arquivo(s)</strong>? 
+                          <br />
+                          Esta ação não pode ser desfeita.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter className="gap-3">
+                        <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                        <AlertDialogAction 
+                          onClick={handleDeleteSelected}
+                          className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                        >
+                          <Trash2 className="h-4 w-4 mr-2" />
+                          Excluir
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </>
               )}
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                 <Button

@@ -17,6 +17,8 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
+  const emailInputRef = React.useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
   const { toast } = useToast();
   const { signIn, user } = useAuth();
@@ -27,16 +29,28 @@ const Login = () => {
       navigate("/app");
     }
   }, [user, navigate]);
+  // Foco automático no campo de email
+  useEffect(() => {
+    emailInputRef.current?.focus();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setError("");
 
-    const { error } = await signIn(formData.email, formData.password);
-    
+    // Validação simples
+    if (!formData.email || !formData.password) {
+      setError("Preencha todos os campos.");
+      setIsLoading(false);
+      emailInputRef.current?.focus();
+      return;
+    }
+
+  const { error } = await signIn(formData.email, formData.password);
     if (error) {
       setError(error.message);
+      emailInputRef.current?.focus();
     } else {
       toast({
         title: "Login realizado com sucesso!",
@@ -44,18 +58,18 @@ const Login = () => {
       });
       navigate("/app");
     }
-    
     setIsLoading(false);
   };
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const {
-      name,
-      value
-    } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    const { name, value, type, checked } = e.target;
+    if (name === "rememberMe") {
+      setRememberMe(checked);
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        [name]: value
+      }));
+    }
   };
   return <div className="min-h-screen flex items-center justify-center px-6 py-12">
       <div className="w-full max-w-md space-y-8">
@@ -97,7 +111,20 @@ const Login = () => {
                 <Label htmlFor="email">Email</Label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input id="email" name="email" type="email" placeholder="seu@email.com" value={formData.email} onChange={handleInputChange} required className="pl-10" disabled={isLoading} />
+                  <Input
+                    id="email"
+                    name="email"
+                    type="email"
+                    placeholder="seu@email.com"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    required
+                    className={`pl-10 ${error ? "border-destructive" : ""}`}
+                    disabled={isLoading}
+                    aria-invalid={!!error}
+                    aria-describedby={error ? "login-error" : undefined}
+                    ref={emailInputRef}
+                  />
                 </div>
               </div>
 
@@ -105,16 +132,42 @@ const Login = () => {
                 <Label htmlFor="password">Senha</Label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input id="password" name="password" type={showPassword ? "text" : "password"} placeholder="Sua senha" value={formData.password} onChange={handleInputChange} required className="pl-10 pr-10" disabled={isLoading} />
-                  <Button type="button" variant="ghost" size="sm" className="absolute right-2 top-1/2 transform -translate-y-1/2" onClick={() => setShowPassword(!showPassword)} disabled={isLoading}>
+                  <Input
+                    id="password"
+                    name="password"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Sua senha"
+                    value={formData.password}
+                    onChange={handleInputChange}
+                    required
+                    className={`pl-10 pr-10 ${error ? "border-destructive" : ""}`}
+                    disabled={isLoading}
+                    aria-invalid={!!error}
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2"
+                    onClick={() => setShowPassword(!showPassword)}
+                    disabled={isLoading}
+                    aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
+                  >
                     {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </Button>
                 </div>
               </div>
 
               <div className="flex items-center justify-between">
-                <label className="flex items-center space-x-2 text-sm">
-                  <input type="checkbox" className="rounded border-border" />
+                <label className="flex items-center space-x-2 text-sm cursor-pointer">
+                  <input
+                    type="checkbox"
+                    className="rounded border-border"
+                    name="rememberMe"
+                    checked={rememberMe}
+                    onChange={handleInputChange}
+                    disabled={isLoading}
+                  />
                   <span>Lembrar-me</span>
                 </label>
                 <Link to="/forgot-password" className="text-sm text-primary hover:underline">
@@ -122,23 +175,32 @@ const Login = () => {
                 </Link>
               </div>
 
-              <Button type="submit" className="w-full gradient-primary text-primary-foreground shadow-medium transition-bounce hover:shadow-large" disabled={isLoading}>
+              <Button
+                type="submit"
+                className="w-full gradient-primary text-primary-foreground shadow-medium transition-bounce hover:shadow-large"
+                disabled={isLoading}
+                aria-busy={isLoading}
+              >
                 {isLoading ? "Entrando..." : "Entrar"}
               </Button>
             </form>
 
-            <div className="relative">
+            {/* Social Login */}
+            <div className="relative my-6">
               <div className="absolute inset-0 flex items-center">
                 <span className="w-full border-t border-border" />
               </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                
+              <div className="relative flex justify-center text-xs uppercase bg-background px-2">
+                ou entre com
               </div>
             </div>
-
             <div className="grid grid-cols-2 gap-3">
-              
-              
+              <Button type="button" variant="outline" className="w-full" disabled>
+                <img src="/google.svg" alt="Google" className="h-5 w-5 mr-2" /> Google
+              </Button>
+              <Button type="button" variant="outline" className="w-full" disabled>
+                <img src="/github.svg" alt="GitHub" className="h-5 w-5 mr-2" /> GitHub
+              </Button>
             </div>
           </CardContent>
         </Card>
@@ -162,6 +224,7 @@ const Login = () => {
                 <p><strong>Email:</strong> demo@fehclaude.com</p>
                 <p><strong>Senha:</strong> demo123</p>
               </div>
+              <p className="text-xs text-muted-foreground mt-2">Use para explorar a plataforma sem criar conta.</p>
             </div>
           </CardContent>
         </Card>

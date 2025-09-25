@@ -154,34 +154,54 @@ const Dashboard = () => {
               <div className="gradient-card border border-border rounded-xl p-6">
                 <h3 className="font-semibold text-lg mb-4">Ações Rápidas</h3>
                 <div className="space-y-3">
-                  <Button variant="outline" className="w-full justify-start">
-                    <FolderOpen className="h-4 w-4 mr-2" />
+                  <Button
+                    variant="outline"
+                    className="w-full justify-start focus-visible:ring-2 focus-visible:ring-primary"
+                    aria-label="Criar nova pasta compartilhada"
+                    tabIndex={0}
+                  >
+                    <FolderOpen className="h-4 w-4 mr-2" aria-hidden="true" />
                     Nova Pasta Compartilhada
                   </Button>
-                  <Button variant="outline" className="w-full justify-start">
-                    <Share2 className="h-4 w-4 mr-2" />
+                  <Button
+                    variant="outline"
+                    className="w-full justify-start focus-visible:ring-2 focus-visible:ring-primary"
+                    aria-label="Compartilhar arquivo"
+                    tabIndex={0}
+                  >
+                    <Share2 className="h-4 w-4 mr-2" aria-hidden="true" />
                     Compartilhar Arquivo
                   </Button>
-                  <Button variant="outline" className="w-full justify-start">
-                    <RotateCcw className="h-4 w-4 mr-2" />
+                  <Button
+                    variant="outline"
+                    className="w-full justify-start focus-visible:ring-2 focus-visible:ring-primary"
+                    aria-label="Ver histórico de arquivos"
+                    tabIndex={0}
+                  >
+                    <RotateCcw className="h-4 w-4 mr-2" aria-hidden="true" />
                     Ver Histórico
                   </Button>
-                  <Button variant="outline" className="w-full justify-start">
-                    <RefreshCw className="h-4 w-4 mr-2" />
+                  <Button
+                    variant="outline"
+                    className="w-full justify-start focus-visible:ring-2 focus-visible:ring-primary"
+                    aria-label="Sincronização offline"
+                    tabIndex={0}
+                  >
+                    <RefreshCw className="h-4 w-4 mr-2" aria-hidden="true" />
                     Sincronização Offline
                   </Button>
                 </div>
               </div>
               
               {/* Storage Usage */}
-              <div className="gradient-card border border-border rounded-xl p-6">
+              <div className="gradient-card border border-border rounded-xl p-6" role="region" aria-label="Informações de armazenamento">
                 <h3 className="font-semibold text-lg mb-4">Armazenamento</h3>
                 <div className="space-y-3">
                   <div className="flex justify-between text-sm">
                     <span>Usado</span>
                     <span>{stats.totalSizeFormatted} de 2TB</span>
                   </div>
-                  <div className="w-full bg-border rounded-full h-2">
+                  <div className="w-full bg-border rounded-full h-2" aria-label="Barra de uso de armazenamento" tabIndex={0} role="progressbar" aria-valuenow={Math.round(stats.usedPercentage)} aria-valuemin={0} aria-valuemax={100} aria-valuetext={`Você usou ${stats.totalSizeFormatted} de 2TB`}>
                     <div 
                       className="bg-gradient-to-r from-primary to-primary-foreground h-2 rounded-full transition-all duration-300" 
                       style={{ width: `${Math.min(stats.usedPercentage, 100)}%` }}

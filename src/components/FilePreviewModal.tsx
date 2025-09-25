@@ -15,12 +15,12 @@ interface FilePreviewModalProps {
 const FilePreviewModal = ({ file, isOpen, onClose, onDownload }: FilePreviewModalProps) => {
   if (!file) return null;
 
-  const isImage = file.type.startsWith('image/');
-  const isPDF = file.type === 'application/pdf';
-  const isText = file.type.startsWith('text/') || file.type.includes('document') || file.type.includes('word');
-  const isVideo = file.type.startsWith('video/');
-  const isAudio = file.type.startsWith('audio/');
-  const isCode = file.type.includes('javascript') || file.type.includes('json') || file.type.includes('css') || file.name.endsWith('.js') || file.name.endsWith('.ts') || file.name.endsWith('.tsx') || file.name.endsWith('.jsx');
+  const isImage = file.type.startsWith('image/') || [".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp", ".svg"].some(ext => file.name.toLowerCase().endsWith(ext));
+  const isPDF = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
+  const isText = file.type.startsWith('text/') || file.type.includes('document') || file.type.includes('word') || [".txt", ".md", ".doc", ".docx", ".rtf"].some(ext => file.name.toLowerCase().endsWith(ext));
+  const isVideo = file.type.startsWith('video/') || [".mp4", ".webm", ".ogg", ".mov", ".avi", ".mkv"].some(ext => file.name.toLowerCase().endsWith(ext));
+  const isAudio = file.type.startsWith('audio/') || [".mp3", ".wav", ".ogg", ".aac", ".flac", ".m4a"].some(ext => file.name.toLowerCase().endsWith(ext));
+  const isCode = file.type.includes('javascript') || file.type.includes('json') || file.type.includes('css') || [".js", ".ts", ".tsx", ".jsx", ".json", ".css", ".html", ".py", ".java", ".c", ".cpp", ".sh"].some(ext => file.name.toLowerCase().endsWith(ext));
 
   const fileDate = new Date(file.uploadDate).toLocaleDateString('pt-BR', {
     year: 'numeric',
@@ -37,16 +37,17 @@ const FilePreviewModal = ({ file, isOpen, onClose, onDownload }: FilePreviewModa
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.3 }}
-          className="relative rounded-xl overflow-hidden bg-muted shadow-xl"
+          className="relative rounded-xl overflow-hidden bg-muted shadow-xl flex flex-col items-center"
         >
           <img
             src={file.url}
             alt={file.name}
-            className="max-w-full max-h-[500px] mx-auto object-contain rounded-xl"
-            onError={(e) => {
-              e.currentTarget.style.display = 'none';
-            }}
+            className="max-w-full max-h-[500px] mx-auto object-contain rounded-xl cursor-zoom-in"
+            onClick={e => window.open(file.url, '_blank')}
+            onError={e => { e.currentTarget.style.display = 'none'; }}
+            tabIndex={0}
           />
+          <span className="text-xs text-muted-foreground mt-2">Clique para ampliar</span>
         </motion.div>
       );
     }
@@ -57,14 +58,16 @@ const FilePreviewModal = ({ file, isOpen, onClose, onDownload }: FilePreviewModa
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.3 }}
-          className="relative rounded-xl overflow-hidden bg-muted shadow-xl"
+          className="relative rounded-xl overflow-hidden bg-muted shadow-xl flex flex-col items-center"
           style={{ height: '500px' }}
         >
           <iframe
             src={`${file.url}#toolbar=1&navpanes=1&scrollbar=1`}
             className="w-full h-full rounded-xl"
             title={file.name}
+            tabIndex={0}
           />
+          <span className="text-xs text-muted-foreground mt-2">Clique com o botão direito para salvar ou imprimir</span>
         </motion.div>
       );
     }
@@ -75,17 +78,19 @@ const FilePreviewModal = ({ file, isOpen, onClose, onDownload }: FilePreviewModa
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.3 }}
-          className="relative rounded-xl overflow-hidden bg-muted shadow-xl"
+          className="relative rounded-xl overflow-hidden bg-muted shadow-xl flex flex-col items-center"
         >
           <video
             controls
             className="max-w-full max-h-[500px] mx-auto rounded-xl"
             preload="metadata"
             poster={file.url}
+            tabIndex={0}
           >
             <source src={file.url} type={file.type} />
             Seu navegador não suporta reprodução de vídeo.
           </video>
+          <span className="text-xs text-muted-foreground mt-2">Dê play para assistir</span>
         </motion.div>
       );
     }
@@ -110,7 +115,7 @@ const FilePreviewModal = ({ file, isOpen, onClose, onDownload }: FilePreviewModa
             <h3 className="text-lg font-semibold">{file.name}</h3>
             <p className="text-sm text-muted-foreground">Arquivo de áudio</p>
           </div>
-          <audio controls className="w-full max-w-md">
+          <audio controls className="w-full max-w-md" tabIndex={0}>
             <source src={file.url} type={file.type} />
             Seu navegador não suporta reprodução de áudio.
           </audio>

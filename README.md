@@ -1,54 +1,82 @@
-# Welcome to your Lovable project
 
-## Project info
+# FehClaude Cloud Storage
 
-**URL**: https://lovable.dev/projects/6eef339e-c514-4d17-a4b9-02e353947436
+FehClaude é uma plataforma moderna de armazenamento em nuvem, com foco em simplicidade, segurança, performance e experiência do usuário. Permite upload, visualização, download, organização e compartilhamento de arquivos de diversos tipos (imagens, vídeos, músicas, PDFs, documentos e mais) com interface responsiva e recursos avançados.
 
-## How can I edit this code?
 
-There are several ways of editing your application.
+## Principais Funcionalidades
 
-**Use Lovable**
+- Upload e download de arquivos de qualquer tipo
+- Visualização de imagens, vídeos, músicas, PDFs e textos diretamente no navegador
+- Renomear, excluir e organizar arquivos
+- Download e exclusão em lote
+- Compartilhamento avançado (links, permissões)
+- Sincronização e histórico de versões
+- Interface responsiva e acessível
+- Autenticação segura (Supabase)
+- Suporte a temas e personalização
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/6eef339e-c514-4d17-a4b9-02e353947436) and start prompting.
+git clone <YOUR_GIT_URL>
+npm i
+npm run dev
 
-Changes made via Lovable will be committed automatically to this repo.
+## Como rodar o projeto localmente
 
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
+Pré-requisitos: Node.js 18+, npm 9+
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
 git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
 cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+npm install
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+Abra http://localhost:8080 no navegador.
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## Scripts úteis
 
-**Use GitHub Codespaces**
+- `npm run dev` — inicia o servidor de desenvolvimento
+- `npm run build` — gera build de produção
+- `npm run preview` — serve build de produção localmente
+- `npm run lint` — executa linter
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## Rodando testes
+
+> (Adicione testes unitários/integrados em breve)
+
+## Estrutura do projeto
+
+- `src/pages/` — páginas principais (Dashboard, Login, etc)
+- `src/components/` — componentes reutilizáveis (UI, FileList, Preview, etc)
+- `src/hooks/` — hooks customizados
+- `src/types/` — tipagens globais
+- `public/` — assets estáticos
+
+## Principais dependências
+
+- React, TypeScript, Vite
+- Tailwind CSS, shadcn-ui, Radix UI
+- Supabase (auth e storage)
+- React Query, Framer Motion
+
+## Segurança
+
+- Inputs validados e protegidos contra XSS
+- Autenticação via Supabase
+- Download seguro de arquivos
+- Recomenda-se usar HTTPS em produção
+
+## Contribuindo
+
+1. Faça um fork do projeto
+2. Crie uma branch: `git checkout -b minha-feature`
+3. Commit suas alterações: `git commit -m 'feat: minha feature'`
+4. Push na branch: `git push origin minha-feature`
+5. Abra um Pull Request
+
+## Licença
+
+MIT
 
 ## What technologies are used for this project?
 
