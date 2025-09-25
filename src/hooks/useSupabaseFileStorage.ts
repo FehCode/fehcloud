@@ -110,22 +110,26 @@ export const useSupabaseFileStorage = () => {
         const fileName = `${Date.now()}_${Math.random().toString(36).substr(2, 9)}.${fileExt}`;
         const filePath = `${user.id}/${fileName}`;
 
-        const { error: uploadError } = await supabase.storage
+        const { error: uploadError, data: uploadData } = await supabase.storage
           .from('user-files')
           .upload(filePath, file);
 
         if (uploadError) {
-          console.error("Upload error:", uploadError);
+          console.error("Upload error:", uploadError, {
+            file,
+            filePath,
+            userId: user.id
+          });
           toast({
             title: "Erro no upload",
-            description: `Falha ao fazer upload de ${file.name}.`,
+            description: `Falha ao fazer upload de ${file.name}: ${uploadError.message}`,
             variant: "destructive",
           });
           continue;
         }
 
         // Save file metadata to database
-        const { error: dbError } = await supabase
+        const { error: dbError, data: dbData } = await supabase
           .from("files")
           .insert({
             user_id: user.id,
@@ -136,12 +140,16 @@ export const useSupabaseFileStorage = () => {
           });
 
         if (dbError) {
-          console.error("Database error:", dbError);
+          console.error("Database error:", dbError, {
+            file,
+            filePath,
+            userId: user.id
+          });
           // Clean up storage file if database insert fails
           await supabase.storage.from('user-files').remove([filePath]);
           toast({
             title: "Erro no upload",
-            description: `Falha ao salvar metadados de ${file.name}.`,
+            description: `Falha ao salvar metadados de ${file.name}: ${dbError.message}`,
             variant: "destructive",
           });
           continue;
@@ -161,7 +169,7 @@ export const useSupabaseFileStorage = () => {
       console.error("Error adding files:", error);
       toast({
         title: "Erro no upload",
-        description: "Não foi possível fazer upload dos arquivos.",
+        description: `Não foi possível fazer upload dos arquivos: ${error?.message || error}`,
         variant: "destructive",
       });
       return false;
